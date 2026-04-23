@@ -63,7 +63,7 @@
 - `src/PlayerController.jsx`: Physics-based 3D movement logic.
 - `src/FinalSequence.jsx`: Cinematic logic for the Mother Whale and the end-game revelation.
 - `src/Starfield.jsx`: Background star rendering and constellation logic.
-- `public/audio/`: Repository for biome-specific BGM and cinematic tracks.
+- `public/audio/`: Seamlessly managed BGM and cinematic audio assets.
 
 ## 📜 License
 

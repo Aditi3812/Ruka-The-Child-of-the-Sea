@@ -1532,7 +1532,7 @@ function Scene({
 }
 
 // ═══════════════════════════════════════════════════════════
-//  STAR SETS (collectible — only 3 biomes have constellation stars)
+//  STAR SETS (collectible — all 8 biomes integrated)
 // ═══════════════════════════════════════════════════════════
 const FOREST_NAMES = new Set(FOREST_STAR_DATA.map(s => s.name))
 const OCEAN_NAMES  = new Set(OCEAN_STAR_DATA.map(s => s.name))
