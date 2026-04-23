@@ -33,7 +33,7 @@ function DialogueLine({ text, style, visible }) {
     },
     revelation: {
       fontFamily: "'Cinzel', serif",
-      fontSize: 'clamp(1.8rem, 5vw, 3.2rem)',
+      fontSize: 'clamp(1.4rem, 3.5vw, 2.2rem)',
       color: '#ffd700',
       opacity: visible ? 1 : 0,
       letterSpacing: '0.25em',
@@ -172,7 +172,7 @@ export default function FinalSequence({ active, onRevelationChange }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: '25vh', // Positions title elegantly above the character
+        paddingBottom: '0', 
         opacity: showTitle ? 1 : 0,
         transition: 'opacity 3s ease',
       }}>

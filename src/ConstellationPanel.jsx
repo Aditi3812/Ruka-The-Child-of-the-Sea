@@ -144,7 +144,7 @@ const CONSTELLATION_DATA = {
     color: '#ff9966',
     stars: [
       { name: 'Solara', meaning: 'The fading sun' },
-      { name: 'Noctis', meaning: 'The rising night' },
+      { name: 'Noctara', meaning: 'The rising night' },
       { name: 'Veyra',  meaning: 'The last light' },
       { name: 'Orien',  meaning: 'The watcher between' },
       { name: 'Kala',  meaning: 'The unseen dawn' },

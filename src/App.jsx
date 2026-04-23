@@ -231,7 +231,7 @@ function Star({ position, name, biomeColor, onCollect, collected }) {
         <meshBasicMaterial color={col} transparent opacity={0.18} depthWrite={false} />
       </mesh>
       <mesh ref={coreRef} position={position}>
-        <sphereGeometry args={[0.19, 10, 10]} />
+        <sphereGeometry args={[0.19, 8, 8]} />
         <meshStandardMaterial color={col} emissive={col}
           emissiveIntensity={hovered ? 4.5 : 2.2} transparent opacity={1} />
       </mesh>
@@ -278,7 +278,7 @@ function ConstellationLines({ stars, color }) {
 function GlobalStarField() {
   const geo = useMemo(() => {
     const pts = []
-    for (let i = 0; i < 600; i++)
+    for (let i = 0; i <400; i++)
       pts.push((Math.random()-0.5)*260, (Math.random()*65)-5, -8-Math.random()*440)
     const g = new THREE.BufferGeometry()
     g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3))
@@ -327,13 +327,6 @@ const FOREST_FLOWERS = Array.from({length:45}, (_,i) => {
 
 function ForestBiome({ collectedStars, onStarCollect, complete }) {
   const flowerRefs = useRef([])
-  const ffGeo = useMemo(() => {
-    const pts = []
-    for (let i=0;i<60;i++) pts.push(LAYOUT.forest.x+(Math.random()-0.5)*55, 1+Math.random()*12, LAYOUT.forest.z-Math.random()*40)
-    const g = new THREE.BufferGeometry()
-    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts),3))
-    return g
-  }, [])
   useFrame(({clock}) => {
     const t = clock.elapsedTime
     flowerRefs.current.forEach((m,i) => {
@@ -395,10 +388,7 @@ function ForestBiome({ collectedStars, onStarCollect, complete }) {
           <meshBasicMaterial color="#ffe88a" transparent opacity={0.04} depthWrite={false} side={THREE.DoubleSide} />
         </mesh>
       ))}
-      {/* Firefly-like star field — low density */}
-      <points geometry={ffGeo}>
-        <pointsMaterial color="#ccffaa" size={0.10} transparent opacity={0.50} sizeAttenuation />
-      </points>
+      {/* Fireflies removed to optimize for denser forest and clear ground dots */}
       {FOREST_STAR_DATA.map(s => (
         <Star key={s.name} position={s.position} name={s.name} biomeColor="#7fff7a"
           collected={collectedStars.has(s.name)} onCollect={onStarCollect} />
@@ -606,8 +596,8 @@ const FROST_STAR_DATA = [
   { position: [LAYOUT.frost.x - 10, 5, LAYOUT.frost.z - 5],  name: 'Nivara' },
   { position: [LAYOUT.frost.x + 18, 7, LAYOUT.frost.z - 5],  name: 'Caelis' },
   { position: [LAYOUT.frost.x - 18, 12, LAYOUT.frost.z - 5], name: 'Virel'  },
-  { position: [LAYOUT.frost.x + 20, 10, LAYOUT.frost.z - 10], name: 'Thalos' },
-  { position: [LAYOUT.frost.x - 24, 9,  LAYOUT.frost.z - 20], name: 'Eiryn'  },
+  { position: [LAYOUT.frost.x + 28, 12, LAYOUT.frost.z - 12], name: 'Thalos' },
+  { position: [LAYOUT.frost.x - 32, 14, LAYOUT.frost.z - 28], name: 'Eiryn'  },
 ]
 
 const FROST_MOUNTAINS = [
@@ -708,19 +698,21 @@ function FrostBiome({ collectedStars, onStarCollect, complete }) {
 //  BIOME 5: SAKURA REALM  (dawn / twilight)
 // ═══════════════════════════════════════════════════════════
 const SAKURA_STAR_DATA = [
-  { position: [LAYOUT.sakura.x - 22, 7, LAYOUT.sakura.z - 10], name: 'Hanari' },
-  { position: [LAYOUT.sakura.x + 10, 8, LAYOUT.sakura.z - 15], name: 'Selune' },
-  { position: [LAYOUT.sakura.x - 12, 5, LAYOUT.sakura.z - 20], name: 'Kaede'  },
-  { position: [LAYOUT.sakura.x + 4,  9, LAYOUT.sakura.z - 25], name: 'Mirai'  },
-  { position: [LAYOUT.sakura.x + 22, 8, LAYOUT.sakura.z - 12], name: 'Komorebi' },
+  { position: [LAYOUT.sakura.x - 28, 12, LAYOUT.sakura.z - 5],  name: 'Hanari' },
+  { position: [LAYOUT.sakura.x + 15, 14, LAYOUT.sakura.z - 8],  name: 'Selune' },
+  { position: [LAYOUT.sakura.x - 18, 10, LAYOUT.sakura.z - 28], name: 'Kaede'  },
+  { position: [LAYOUT.sakura.x + 0,  15, LAYOUT.sakura.z - 35], name: 'Mirai'  },
+  { position: [LAYOUT.sakura.x + 32, 11, LAYOUT.sakura.z - 18], name: 'Komorebi' },
 ]
 
-const SAKURA_TREES = (() => {
+const SAKURA_TREES_DATA = (() => {
   const pts = [
     [-14,-3],[-8,-8],[-2,-5],[4,-9],[10,-4],[16,-8],
+    [-14,-3],[-8,-8],[-2,-5],[4,-9],[16,-8],
     [-12,-14],[-5,-18],[2,-15],[9,-19],[15,-13],
     [-16,-22],[-8,-25],[0,-22],[8,-26],[16,-21],
-    [-10,-30],[-2,-33],[6,-29],[14,-32],
+    [-16,-22],[-8,-25],[8,-26],[16,-21],
+    [-22,-10],[24,-4],[-5,-32],[18,-30],[0,-8],
   ]
   return pts.map(([x,z]) => ({
     x, z,
@@ -729,14 +721,7 @@ const SAKURA_TREES = (() => {
   }))
 })()
 
-const SAKURA_PETALS = Array.from({length:80}, (_,i) => ({
-  x: ((i*7.13)%60)-30, y: 2+((i*3.71)%18), 
-  z: -1-(i*4.27%38),
-  phase: (i*1.13)%6.28, drift: (i%2===0?1:-1)*(0.3+i%5*0.1),
-}))
-
 function SakuraBiome({ collectedStars, onStarCollect, complete }) {
-  const petalRefs = useRef([])
   const starGeo = useMemo(() => {
     const pts = []
     for (let i=0;i<90;i++) pts.push(LAYOUT.sakura.x+(Math.random()-0.5)*75, 4+Math.random()*25, LAYOUT.sakura.z-Math.random()*50)
@@ -744,16 +729,6 @@ function SakuraBiome({ collectedStars, onStarCollect, complete }) {
     g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts),3))
     return g
   }, [])
-  useFrame(({clock}) => {
-    const t = clock.elapsedTime
-    petalRefs.current.forEach((m,i) => {
-      if (!m) return
-      const p = SAKURA_PETALS[i]
-      m.position.y = p.y - ((t*0.3+p.phase)%18)*0.12
-      m.position.x = p.x + Math.sin(t*0.4+p.phase)*p.drift
-      if (m.position.y < -0.5) m.position.y = 16
-    })
-  })
   return (
     <group>
       {/* Beige ground */}
@@ -769,7 +744,7 @@ function SakuraBiome({ collectedStars, onStarCollect, complete }) {
       ))}
 
       {/* Pink patches near trees */}
-      {SAKURA_TREES.map((t,i) => (
+      {SAKURA_TREES_DATA.map((t,i) => (
         <mesh key={`patch-${i}`} rotation={[-Math.PI/2,0,0]} position={[LAYOUT.sakura.x+t.x,-0.47,LAYOUT.sakura.z+t.z]}>
           <circleGeometry args={[3,8]} /><meshStandardMaterial color="#ffb8d8" transparent opacity={0.4} />
         </mesh>
@@ -780,7 +755,7 @@ function SakuraBiome({ collectedStars, onStarCollect, complete }) {
           <planeGeometry args={[2.5,1.8]} /><meshStandardMaterial color="#2a1a1e" roughness={0.9} />
         </mesh>
       ))}
-      {SAKURA_TREES.map((t,i) => (
+      {SAKURA_TREES_DATA.map((t,i) => (
         <group key={i} position={[LAYOUT.sakura.x+t.x,0,LAYOUT.sakura.z+t.z]}>
           <mesh position={[0,t.h*0.32,0]}>
             <cylinderGeometry args={[0.14,0.18,t.h*0.65,7]} />
@@ -799,12 +774,6 @@ function SakuraBiome({ collectedStars, onStarCollect, complete }) {
             <meshStandardMaterial color="#ffd0e4" transparent opacity={0.88} roughness={0.7} />
           </mesh>
         </group>
-      ))}
-      {SAKURA_PETALS.map((p,i) => (
-        <mesh key={i} ref={el => petalRefs.current[i] = el} position={[LAYOUT.sakura.x+p.x,p.y,LAYOUT.sakura.z+p.z]}>
-          <boxGeometry args={[0.12,0.08,0.12]} />
-          <meshStandardMaterial color="#ffb8d8" emissive="#ff80b0" emissiveIntensity={0.3} transparent opacity={0.8} />
-        </mesh>
       ))}
       <mesh position={[LAYOUT.sakura.x,15,LAYOUT.sakura.z-45]}>
         <planeGeometry args={[100,30]} />
@@ -834,13 +803,48 @@ const SPRING_STAR_DATA = [
   { position: [LAYOUT.spring.x - 2,  10, LAYOUT.spring.z - 15], name: 'Aethera' },
 ]
 
-const SPRING_FLOWERS = Array.from({length:120}, (_,i) => ({
-  x: (Math.random()-0.5)*70,
-  z: -Math.random()*50,
+const SPRING_FLOWERS_DATA = Array.from({length:150}, (_,i) => ({
+  x: (Math.random() - 0.5) * 98,
+  z: (Math.random() * 100) - 65, 
   col: ['#ff6699','#ffcc00','#66ddff','#99ff66','#ff99cc','#ffdd88'][i%6],
   phase: Math.random()*6.28,
   h: 0.15+Math.random()*0.4
 }))
+
+function FloatingHill({ position, size, color }) {
+  const flowers = useMemo(() => Array.from({ length: 8 }).map(() => ({
+    pos: [(Math.random() - 0.5) * size * 1.1, size * 0.7, (Math.random() - 0.5) * size * 1.1],
+    col: ['#ff6699', '#ffcc00', '#66ddff', '#99ff66', '#ff99cc', '#ff5e5e'][Math.floor(Math.random() * 6)]
+  })), [size])
+
+  return (
+    <group position={position}>
+      <mesh>
+        <sphereGeometry args={[size, 16, 8]} />
+        <meshStandardMaterial color={color} roughness={0.9} />
+      </mesh>
+      {flowers.map((f, i) => (
+        <mesh key={i} position={f.pos}>
+          <sphereGeometry args={[0.18, 4, 4]} />
+          <meshStandardMaterial color={f.col} emissive={f.col} emissiveIntensity={0.5} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function Nomad({ position, color }) {
+  const group = useRef()
+  useFrame(({ clock }) => {
+    if (group.current) group.current.rotation.y = Math.sin(clock.elapsedTime * 0.5) * 0.1
+  })
+  return (
+    <group ref={group} position={position}>
+      <mesh position={[0, 0.4, 0]}><coneGeometry args={[0.15, 0.8, 8]} /><meshStandardMaterial color={color} /></mesh>
+      <mesh position={[0, 0.9, 0]}><sphereGeometry args={[0.12, 8, 8]} /><meshStandardMaterial color="#f0e8d5" /></mesh>
+    </group>
+  )
+}
 
 function SpringBiome({ collectedStars, onStarCollect, complete }) {
   const flowerRefs = useRef([])
@@ -855,7 +859,7 @@ function SpringBiome({ collectedStars, onStarCollect, complete }) {
     const t = clock.elapsedTime
     flowerRefs.current.forEach((m,i) => {
       if (!m) return
-      m.position.y = SPRING_FLOWERS[i].h + Math.sin(t*0.7+SPRING_FLOWERS[i].phase)*0.06
+      m.position.y = SPRING_FLOWERS_DATA[i].h + Math.sin(t*0.7+SPRING_FLOWERS_DATA[i].phase)*0.06
     })
   })
   return (
@@ -863,12 +867,97 @@ function SpringBiome({ collectedStars, onStarCollect, complete }) {
       <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x,-0.65,LAYOUT.spring.z-15]}>
         <planeGeometry args={[100,100]} /><meshStandardMaterial color="#1a3a0a" roughness={0.95} />
       </mesh>
+      {/* Lakes */}
+      <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x+15,-0.643,LAYOUT.spring.z-35]}>
+        <circleGeometry args={[12,32]} /><meshStandardMaterial color="#40a0ff" metalness={0.6} roughness={0.1} transparent opacity={0.7} />
+      </mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x-25,-0.643,LAYOUT.spring.z-10]}>
+        <circleGeometry args={[8,32]} /><meshStandardMaterial color="#3080ff" metalness={0.6} roughness={0.1} transparent opacity={0.6} />
+      </mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x-10,-0.643,LAYOUT.spring.z-55]}>
+        <circleGeometry args={[10,32]} /><meshStandardMaterial color="#40c0ff" metalness={0.6} roughness={0.1} transparent opacity={0.7} />
+      </mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x+30,-0.643,LAYOUT.spring.z-10]}>
+        <circleGeometry args={[9,32]} /><meshStandardMaterial color="#3080ff" metalness={0.6} roughness={0.1} transparent opacity={0.6} />
+      </mesh>
+      <mesh rotation={[-Math.PI/2,0,0]} position={[LAYOUT.spring.x-35,-0.643,LAYOUT.spring.z-80]}>
+        <circleGeometry args={[11,32]} /><meshStandardMaterial color="#40a0ff" metalness={0.6} roughness={0.1} transparent opacity={0.7} />
+      </mesh>
+      {/* River */}
+      <mesh rotation={[-Math.PI/2, 0, Math.PI/3.5]} position={[LAYOUT.spring.x - 5, -0.645, LAYOUT.spring.z - 35]}>
+        <planeGeometry args={[12, 95]} />
+        <meshStandardMaterial color="#3080ff" transparent opacity={0.5} metalness={0.5} roughness={0.1} />
+      </mesh>
+
+      {/* Big Tree & Swing */}
+      <group position={[LAYOUT.spring.x + 25, 0, LAYOUT.spring.z - 45]}>
+        <mesh position={[0, 4, 0]}>
+          <cylinderGeometry args={[0.7, 1.0, 8, 12]} />
+          <meshStandardMaterial color="#3d2b1f" />
+        </mesh>
+        <mesh position={[0, 9, 0]}>
+          <sphereGeometry args={[5.5, 16, 16]} />
+          <meshStandardMaterial color="#1a3d12" />
+        </mesh>
+        {/* Branch for Swing */}
+        <mesh position={[-2.5, 6.5, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.22, 0.22, 5, 8]} />
+          <meshStandardMaterial color="#3d2b1f" />
+        </mesh>
+        {/* Swing Ropes */}
+        <mesh position={[-4, 4.5, 0.3]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshStandardMaterial color="#222" /></mesh>
+        <mesh position={[-4, 4.5, -0.3]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshStandardMaterial color="#222" /></mesh>
+        {/* Swing Seat */}
+        <mesh position={[-4, 2.5, 0]}>
+          <boxGeometry args={[0.8, 0.1, 1.2]} />
+          <meshStandardMaterial color="#5d4037" />
+        </mesh>
+      </group>
+
+      {/* Extra Trees to fill empty space */}
+      {[[-30, -50], [20, -15]].map(([x, z], i) => (
+        <group key={`extra-tree-${i}`} position={[LAYOUT.spring.x + x, 0, LAYOUT.spring.z + z]}>
+          <mesh position={[0, 3.5, 0]}><cylinderGeometry args={[0.5, 0.8, 7, 10]} /><meshStandardMaterial color="#3d2b1f" /></mesh>
+          <mesh position={[0, 8, 0]}><sphereGeometry args={[4.5, 12, 12]} /><meshStandardMaterial color="#1a3d12" /></mesh>
+        </group>
+      ))}
+
+      {/* Replaced Rocks with Bushes */}
+      {[[5,-25],[18,-25],[-5,-40],[32,-38],[-38,-15],[5,-50],[15,-5],[40,-20],[-45,-5],[25,-55],[0,-64],[-25,-62],[35,-60]].map(([x,z],i) => (
+        <mesh key={`rock-bush-${i}`} position={[LAYOUT.spring.x+x, 0.15, LAYOUT.spring.z+z]}>
+          <sphereGeometry args={[1.5, 12, 12]} /><meshStandardMaterial color="#1e4d0a" roughness={0.9} />
+        </mesh>
+      ))}
+      {/* Bushes */}
+      {[[-15,-10],[3,-22],[-20,-15],[12,-30],[-8,-25],[-30,-40],[10,-60],[-35,-15],[30,-10],[45,-45],[0,-60],[-20,-64],[-45,-60],[40,-62],[-10,-10],[25,-25],[-30,-60],[15,-58],[5,-61],[-40,-5]].map(([x,z],i) => (
+        <mesh key={`bush-${i}`} position={[LAYOUT.spring.x+x, 0, LAYOUT.spring.z+z]}>
+          <sphereGeometry args={[1.2,12,12]} /><meshStandardMaterial color="#2d5a10" roughness={0.9} />
+        </mesh>
+      ))}
+      {/* Hills */}
+      {[
+        { p: [-35, -15], h: 6,  s: 7, f: true },
+        { p: [38, -25],  h: -0.2, s: 9, f: false },
+        { p: [-30, -55], h: 8, s: 8, f: true },
+        { p: [15, -50],  h: 5,  s: 6, f: true },
+        { p: [-15, -5],  h: -0.2, s: 8, f: false },
+        { p: [0, -60],   h: 9, s: 9, f: true }
+      ].map((obj, i) => {
+        const pos = [LAYOUT.spring.x + obj.p[0], obj.h, LAYOUT.spring.z + obj.p[1]]
+        if (obj.f) return <FloatingHill key={`hill-f-${i}`} position={pos} size={obj.s} color="#1a3d12" />
+        return (
+          <mesh key={`hill-dist-${i}`} position={pos}>
+            <sphereGeometry args={[obj.s, 12, 6]} />
+            <meshStandardMaterial color="#1a3d12" roughness={0.9} />
+          </mesh>
+        )
+      })}
       {[[-14,LAYOUT.spring.z-8],[6,LAYOUT.spring.z-18],[-5,LAYOUT.spring.z-28],[18,LAYOUT.spring.z-14],[-20,LAYOUT.spring.z-22]].map(([x,z],i) => (
-        <mesh key={i} rotation={[-Math.PI/2,0,0]} position={[x,-0.48,z]}>
+        <mesh key={i} rotation={[-Math.PI/2,0,0]} position={[x,-0.638,z]}>
           <circleGeometry args={[4+i*0.5,10]} /><meshStandardMaterial color="#224a0e" roughness={1} transparent opacity={0.6} />
         </mesh>
       ))}
-      {SPRING_FLOWERS.map((f,i) => (
+      {SPRING_FLOWERS_DATA.map((f,i) => (
         <mesh key={i} ref={el => flowerRefs.current[i] = el} position={[LAYOUT.spring.x+f.x,f.h,LAYOUT.spring.z+f.z]}>
           <sphereGeometry args={[0.1,6,5]} />
           <meshStandardMaterial color={f.col} emissive={f.col} emissiveIntensity={0.6} />
@@ -882,11 +971,6 @@ function SpringBiome({ collectedStars, onStarCollect, complete }) {
           </mesh>
         )
       })}
-      {[[-20,LAYOUT.spring.z-35,3],[10,LAYOUT.spring.z-40,4],[-5,LAYOUT.spring.z-32,3.5]].map(([x,z,h],i) => (
-        <mesh key={i} position={[LAYOUT.spring.x+x,h*0.3,z]}>
-          <sphereGeometry args={[12,8,4]} /><meshStandardMaterial color="#1e4008" roughness={0.98} />
-        </mesh>
-      ))}
       {/* Minimal stars — daytime */}
       <points geometry={starGeo}>
         <pointsMaterial color="#ffffff" size={0.07} transparent opacity={0.15} sizeAttenuation />
@@ -1018,11 +1102,11 @@ function RainbowBiome({ collectedStars, onStarCollect, complete }) {
 //  Triggers transcendence sequence
 // ═══════════════════════════════════════════════════════════
 const TWILIGHT_STAR_DATA = [
-  { position: [LAYOUT.twilight.x - 12, 6, LAYOUT.twilight.z - 10], name: 'Solara' },
-  { position: [LAYOUT.twilight.x + 10, 8, LAYOUT.twilight.z - 20], name: 'Noctis'  },
-  { position: [LAYOUT.twilight.x - 2,  5, LAYOUT.twilight.z - 5],  name: 'Veyra'   },
-  { position: [LAYOUT.twilight.x + 14, 9, LAYOUT.twilight.z - 15], name: 'Orien'   },
-  { position: [LAYOUT.twilight.x - 8,  7, LAYOUT.twilight.z - 25], name: 'Kala'   },
+  { position: [LAYOUT.twilight.x - 12, 16, LAYOUT.twilight.z - 10], name: 'Solara' },
+  { position: [LAYOUT.twilight.x + 25, 14, LAYOUT.twilight.z - 20], name: 'Noctara' },
+  { position: [LAYOUT.twilight.x - 18, 12, LAYOUT.twilight.z - 5],  name: 'Veyra'   },
+  { position: [LAYOUT.twilight.x + 20, 18, LAYOUT.twilight.z - 35], name: 'Orien'   },
+  { position: [LAYOUT.twilight.x - 5,  20, LAYOUT.twilight.z - 50], name: 'Kala'   },
 ]
 
 function TwilightBiome({ collectedStars, onStarCollect, complete }) {
@@ -1030,6 +1114,23 @@ function TwilightBiome({ collectedStars, onStarCollect, complete }) {
   const starRef2 = useRef()
   const glowRef  = useRef()
   const elRef    = useRef(0)
+  
+  const huts = useMemo(() => [
+    { pos: [-18, -25], roof: '#ff5e5e', wall: '#1a1208' },
+    { pos: [18, -35],  roof: '#7adcff', wall: '#151515' },
+    { pos: [5, -45],   roof: '#ffd700', wall: '#1a1208' },
+    { pos: [-10, -55], roof: '#c89cff', wall: '#1a1208' },
+    { pos: [28, -20],  roof: '#7fff7a', wall: '#151515' },
+    { pos: [-25, -10], roof: '#ffa07a', wall: '#1a1208' },
+    { pos: [10, -10],  roof: '#da70d6', wall: '#151515' },
+    { pos: [35, -45],  roof: '#00ced1', wall: '#1a1208' },
+    { pos: [15, -55],  roof: '#ffeb3b', wall: '#151515' },
+    { pos: [-30, -40], roof: '#4caf50', wall: '#1a1208' },
+    { pos: [-40, -20], roof: '#ff69b4', wall: '#1a1208' },
+    { pos: [40, -10],  roof: '#7fffd4', wall: '#151515' },
+    { pos: [0, -65],   roof: '#ffa500', wall: '#1a1208' },
+  ], [])
+
   const starGeo1 = useMemo(() => {
     const pts = []
     for (let i=0;i<200;i++) pts.push(LAYOUT.twilight.x+(Math.random()-0.5)*85, 2+Math.random()*40, LAYOUT.twilight.z-Math.random()*55)
@@ -1070,11 +1171,22 @@ function TwilightBiome({ collectedStars, onStarCollect, complete }) {
         <planeGeometry args={[100,100]} /><meshStandardMaterial color="#4a3728" roughness={1} />
       </mesh>
       {/* Silhouette hills */}
-      {[[-22,LAYOUT.twilight.z-30,5],[0,LAYOUT.twilight.z-35,7],[20,LAYOUT.twilight.z-28,4.5],[-10,LAYOUT.twilight.z-38,6]].map(([x,z,h],i) => (
-        <mesh key={i} position={[LAYOUT.twilight.x+x,h*0.3,z]}>
-          <sphereGeometry args={[10+i,8,4]} /><meshStandardMaterial color={['#1a3d12','#224a0e','#1e4008','#2e5a10'][i%4]} roughness={1} />
-        </mesh>
-      ))}
+      {[
+        { p: [-35, -40], h: 8, s: 10, f: true },
+        { p: [35, -40],  h: 0.1, s: 12, f: false },
+        { p: [-25, -70], h: 10, s: 11, f: true },
+        { p: [20, -75],  h: 11, s: 12, f: true }
+      ].map((obj, i) => {
+        const pos = [LAYOUT.twilight.x + obj.p[0], obj.h, LAYOUT.twilight.z + obj.p[1]]
+        const col = ['#8b7355', '#a68966', '#7a634a', '#c2a27a'][i % 4]
+        if (obj.f) return <FloatingHill key={`t-hill-f-${i}`} position={pos} size={obj.s} color={col} />
+        return (
+          <mesh key={`t-hill-g-${i}`} position={pos}>
+            <sphereGeometry args={[obj.s, 10, 5]} />
+            <meshStandardMaterial color={col} roughness={0.9} />
+          </mesh>
+        )
+      })}
       {/* Horizon glow */}
       <mesh ref={glowRef} position={[LAYOUT.twilight.x,4,LAYOUT.twilight.z-50]}>
         <planeGeometry args={[110,22]} />
@@ -1084,11 +1196,28 @@ function TwilightBiome({ collectedStars, onStarCollect, complete }) {
         <planeGeometry args={[110,12]} />
         <meshBasicMaterial color="#8820a0" transparent opacity={0.04} depthWrite={false} side={THREE.DoubleSide} />
       </mesh>
-      {/* Monoliths */}
-      {[-14,0,14].map((x,i) => (
-        <mesh key={i} position={[LAYOUT.twilight.x+x,2.5,LAYOUT.twilight.z-12-i*5]}>
-          <boxGeometry args={[1.2,5,0.9]} /><meshStandardMaterial color="#2a2030" roughness={0.95} />
-        </mesh>
+      {/* Pine Tree Forest */}
+      {[
+        [-25,-5,6], [20,-12,7.5], [-5,-35,5], [30,-45,8], [-15,-50,6.5],
+        [-35,-5,6], [-30,-15,7], [25,-5,5.5], [35,-15,8], [-10,-60,9],
+        [10,-65,7.5], [-40,-50,6], [40,-60,7], [-20,-65,8.5], [20,-70,6.5],
+        [0,-75,10], [-35,-70,7], [-12,-20,5], [12,-25,6],
+        [15,-5,5.5], [-5,-5,6], [5,-10,7], [0,-15,6.5], [25,-20,8],
+        [-20,-25,7], [35,-30,9], [-5,-45,8], [22,-50,6], [-32,-55,7]
+      ].map(([x,z,h],i) => (
+        <group key={`pine-${i}`} position={[LAYOUT.twilight.x+x, 0, LAYOUT.twilight.z+z]}>
+          <mesh position={[0,h*0.2,0]}><cylinderGeometry args={[0.15,0.2,h*0.4,6]}/><meshStandardMaterial color="#2a1a10"/></mesh>
+          <mesh position={[0,h*0.6,0]}><coneGeometry args={[1.5,h*0.8,8]}/><meshStandardMaterial color="#1a3312"/></mesh>
+          <mesh position={[0,h*0.9,0]}><coneGeometry args={[1.0,h*0.6,8]}/><meshStandardMaterial color="#224418"/></mesh>
+        </group>
+      ))}
+
+      {/* Huts */}
+      {huts.map((h,i) => (
+        <group key={`hut-${i}`} position={[LAYOUT.twilight.x + h.pos[0], 0, LAYOUT.twilight.z + h.pos[1]]}>
+          <mesh position={[0,1,0]}><cylinderGeometry args={[1.5,1.5,2,8]} /><meshStandardMaterial color={h.wall} /></mesh>
+          <mesh position={[0,2.8,0]}><coneGeometry args={[2.1,1.8,8]} /><meshStandardMaterial color={h.roof} metalness={0.4} roughness={0.3} /></mesh>
+        </group>
       ))}
       {/* Increasing star field */}
       <points ref={starRef1} geometry={starGeo1}>
@@ -1221,7 +1350,7 @@ const LIGHT_CFG = {
   sakura:        {ambColor:'#2a1420',ambInt:0.55,dirColor:'#ff9060',dirInt:1.10,dir2Color:'#c06080',fogColor:'#160a10',fogNear:36,fogFar:112, skyColor:'#ff9a9e'},
   spring:        {ambColor:'#1e3a10',ambInt:0.65,dirColor:'#ffffff',dirInt:1.80,dir2Color:'#a0d060',fogColor:'#0e1c08',fogNear:40,fogFar:120, skyColor:'#87ceeb'},
   rainbow:       {ambColor:'#1a3a18',ambInt:0.62,dirColor:'#f0f0a0',dirInt:1.70,dir2Color:'#60d090',fogColor:'#101808',fogNear:42,fogFar:125, skyColor:'#95e1d3'},
-  twilight:      {ambColor:'#180810',ambInt:0.35,dirColor:'#ff4010',dirInt:0.80,dir2Color:'#6010a0',fogColor:'#0a0408',fogNear:32,fogFar:105, skyColor:'#2c3e50'},
+  twilight:      {ambColor:'#3a2520',ambInt:0.55,dirColor:'#ff8040',dirInt:1.40,dir2Color:'#6010a0',fogColor:'#150808',fogNear:45,fogFar:140, skyColor:'#4a3020'},
   transcendence: {ambColor:'#1a1040',ambInt:0.90,dirColor:'#ffffff',dirInt:1.80,dir2Color:'#a080ff',fogColor:'#080418',fogNear:50,fogFar:160, skyColor:'#080418'},
 }
 
@@ -1349,6 +1478,27 @@ function Scene({
       <fog attach="fog" color="#0b1808" near={38} far={115} />
       <GlobalStarField />
       <DebugCube visible={showDebugCube} />
+
+      {/* ── River between Forest and Frost ── */}
+      <group position={[0, 0, -52.5]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.44, 0]}>
+          <planeGeometry args={[100, 16]} />
+          <meshStandardMaterial 
+            color="#30a0ff" 
+            transparent 
+            opacity={0.55} 
+            metalness={0.6} 
+            roughness={0.1} 
+          />
+        </mesh>
+        {/* Bank details: blending forest green and frost white */}
+        {[[-42, 9], [-20, -9], [5, 9], [-12, 10]].map(([x, z], i) => (
+          <mesh key={i} position={[x, 0.1, z]}>
+            <sphereGeometry args={[1.7, 8, 8]} />
+            <meshStandardMaterial color={i === 1 ? "#d8eef5" : "#1a3d12"} roughness={0.8} />
+          </mesh>
+        ))}
+      </group>
 
       {/* ── BIOME 1 — Enchanted Forest ── */}
       <ForestBiome collectedStars={collectedStars} onStarCollect={onStarCollect} complete={biomesComplete.forest} />
@@ -1497,7 +1647,7 @@ function AudioManager({ currentBiome, prologueDone, transcendence }) {
         audio.src = nextTrack
         audio.loop = (nextTrack !== AUDIO_MAP.ending)
         audio.load()
-        attemptPlay()
+        attemptPlay(nextTrack === AUDIO_MAP.ending ? 0.6 : 0.4)
       } else {
         // Fade out then switch
         fadeIntervalRef.current = setInterval(() => {
@@ -1509,9 +1659,9 @@ function AudioManager({ currentBiome, prologueDone, transcendence }) {
             audio.src = nextTrack
             audio.load()
             audio.loop = (nextTrack !== AUDIO_MAP.ending)
-            attemptPlay()
+            attemptPlay(nextTrack === AUDIO_MAP.ending ? 0.6 : 0.4)
           }
-        }, 50)
+        }, 100) // Slower fade-out
       }
     }
 

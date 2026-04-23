@@ -252,7 +252,7 @@ export default function Prologue({ onDismiss }) {
             <p className="s1-sub">once every millennium, the sky and sea finally meet</p>
           </div>
           <div className="scroll-invitation">
-            <span>scroll to hear the story</span>
+            <span>click once and scroll to hear the story</span>
             <div className="scroll-arrow">↓</div>
           </div>
         </Section>
@@ -345,13 +345,13 @@ export default function Prologue({ onDismiss }) {
           <div className="s5-rule-top" />
           <div className="s7-lines">
             <p className="s7-line" style={textAppearStyle(s7_1)}>
-              Only then…
+              You are the Chosen One
             </p>
             <p className="s7-line accent" style={textAppearStyle(s7_2)}>
-              will they open their eyes —
+              Can you complete the task entrusted to you
             </p>
             <p className="s7-line" style={textAppearStyle(s7_3)}>
-              and realize…
+              So that you finally witness and see
             </p>
             <p className="s7-line revelation" style={{ ...textAppearStyle(s7_4), fontSize: '2.4rem', textShadow: `0 0 30px rgba(255,255,255,${s7_4}), 0 0 60px rgba(180,140,255,${s7_4*0.5})` }}>
               The secrets held by the universe.
@@ -361,7 +361,7 @@ export default function Prologue({ onDismiss }) {
           <button className="s5-cta" onClick={triggerDismiss}>
             ✦ &nbsp; Begin the Journey &nbsp; ✦
           </button>
-          <p className="s5-hint">or keep scrolling</p>
+          <p className="s5-hint">and may the Song of the Stars guide you home. </p>
         </Section>
 
         <div style={{ height: '20vh' }} />
