@@ -9,7 +9,7 @@ import React, { useState, useEffect } from 'react'
 const DIALOGUE_LINES = [
   { text: 'Oh, now I see...',                                delay: 29000, style: 'pause'    },
   { text: 'In this Birth Festival, the witness is me.',       delay: 35000, style: 'normal'   },
-  { text: 'I live in the Universe,\nand the Universe lives in Me.', delay: 41000, style: 'revelation' },
+  { text: 'I live in the Universe,and the Universe lives in Me.', delay: 41000, style: 'revelation' },
   { text: 'For I am,',                                      delay: 47000, style: 'revelation' },
 ]
 
