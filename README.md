@@ -1,4 +1,4 @@
-# ◈ Ruka: The Birth Festival ◈
+# ◈ Ruka: The Child of the Sea ◈
 
 **Stellar Journey** is an immersive, cinematic 3D web experience built with React and Three.js. It is heavily inspired by the movie, "The Children of the Sea" which released in 2019 and directed by Ayumu Watanabe.
 
